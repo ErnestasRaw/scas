@@ -1,17 +1,23 @@
 
-import './styles/globals.css'; // Updated path
-import Header from '../components/utils/header'; // Updated path
+import './styles/globals.css'; 
+import Header from '../components/utils/header'; 
+import { Provider } from  "./provider";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body>
-        <Header />
-        {children}</body>
+      <Provider>
+        <body>
+          <Header />
+          <Toaster position="bottom-center" />
+          {children}
+        </body>
+      </Provider>
     </html>
   );
 }

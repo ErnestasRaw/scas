@@ -10,6 +10,7 @@ export interface UserDocument {
     image: string;
     createdAt: Date;
     updatedAt: Date;
+    role: string;
   }
 
 
