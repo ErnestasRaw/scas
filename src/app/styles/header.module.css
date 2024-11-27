@@ -1,8 +1,55 @@
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #0080ff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    align-items: center; 
+    justify-content: flex-end; 
+    padding: 1rem;
+    background-color: #333;
+    color: white;
+    height: 50px;
+  }
+  
+  .Logo {
+    margin-right: 20px; 
+  }
+  
+  .Hamburger {
+    display: none;
+    cursor: pointer;
+  }
+  
+  .Nav {
+    display: flex;
+    gap: 2rem; 
+    position: relative;
+    font-size: 25px;
+  }
+  
+  .Nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .Hamburger {
+      display: block; 
+    }
+  
+    .Nav {
+      display: none;
+      flex-direction: column;
+      background-color: #333;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      padding: 1rem;
+      width: 200px;
+    }
+  
+    .Nav.Show {
+      display: flex;
+    }
+  }
+  
