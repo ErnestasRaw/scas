@@ -1,6 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
-import { UserDocument } from "./User";
-import { VenueDocument } from "./Venues";
+
 
 export interface ReservationDocument {
   reservationId: string;
