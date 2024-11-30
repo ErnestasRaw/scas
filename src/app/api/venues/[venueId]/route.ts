@@ -1,17 +1,16 @@
-// src/pages/api/venues/[venueId].ts
 import { NextResponse } from "next/server"; 
 import { connectDB } from "@/backend/lib/mongodb"; 
-import Venue from "@/models/Venues"; 
+import VenueDocument from "@/models/Venues"; 
 
 export async function GET(req: Request, { params }: { params: { venueId: string } }) {
-  const { venueId } = params;
+  const { venueId } = await params;
 
 
   try {
     await connectDB();
 
 
-    const venue = await Venue.findById(venueId);
+    const venue = await VenueDocument.findById(venueId);
     
     if (!venue) {
       console.log(`Venue su ID ${venueId} nera`);
@@ -24,7 +23,6 @@ export async function GET(req: Request, { params }: { params: { venueId: string 
 
     return NextResponse.json(venue, { status: 200 });
   } catch (error) {
-    // Log the error details
     console.error("Error fetching venue:", error);
 
     return NextResponse.json(

@@ -1,13 +1,14 @@
 'use client';
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"; // You are using the Next.js router
+import { useRouter } from "next/navigation"; 
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import styles from "@/app/styles/page.module.css";
 import { useEffect, useState } from "react";
+import { Venue } from "@/models/Venues";
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function HomePage() {
     async function fetchVenues() {
       try {
         const response = await fetch("/api/venues");
-        const data: Venue[] = await response.json();
+        const data: typeof Venue[] = await response.json();
         setVenues(data);
         setLoading(false);
       } catch (error) {

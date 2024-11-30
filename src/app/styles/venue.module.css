@@ -1,0 +1,61 @@
+/* src/app/styles/VenuePage.module.css */
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .venueCard {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+  }
+  
+  .venueName {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .venueDescription {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #555;
+  }
+  
+  .venueCapacity {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #777;
+  }
+  
+  .venuePhone {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #444;
+  }
+  
+  .reserveButton {
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .reserveButton:hover {
+    background-color: #005bb5;
+  }
+  
