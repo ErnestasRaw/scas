@@ -8,10 +8,11 @@ interface RegisterValues {
     email: string;
     password: string;
     name: string;
+    phone: string;
 }
 
 export const register = async (values: RegisterValues) => {
-    const { email, password, name } = values;
+    const { email, password, name, phone } = values;
 
     try {
         await connectDB();
@@ -26,6 +27,7 @@ export const register = async (values: RegisterValues) => {
           name,
           email,
           password: hashedPassword,
+          phone
         });
         const savedUser = await user.save();
 

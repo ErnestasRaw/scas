@@ -33,9 +33,9 @@ export async function GET() {
       const venues = await Venue.find({});
       return NextResponse.json(venues, { status: 200 });
     } catch (error) {
-      console.error("Error fetching venues:", error);
+      console.error("Klaida gaunant sales:", error);
       return NextResponse.json(
-        { message: "Failed to fetch venues" },
+        { message: "Klaida gaunant sales" },
         { status: 500 }
       );
     }

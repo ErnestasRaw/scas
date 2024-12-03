@@ -3,9 +3,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"; 
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import styles from "@/app/styles/page.module.css";
 import { useEffect, useState } from "react";
 import { Venue } from "@/models/Venues";
+
 
 export default function HomePage() {
   const { status } = useSession();
@@ -13,22 +13,27 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+
   useEffect(() => {
     async function fetchVenues() {
       try {
         const response = await fetch("/api/venues");
-        const data: typeof Venue[] = await response.json();
+        const data: Venue[] = await response.json();
         setVenues(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching venues:", error);
+        console.error("Nepavyko gauti salių:", error);
         toast.error("Nepavyko įkelti salių duomenų");
         setLoading(false);
       }
     }
 
+
     fetchVenues();
   }, []);
+
+
+
 
   function handleReserve(venueId: string) {
     if (status === "authenticated") {
@@ -39,39 +44,63 @@ export default function HomePage() {
   }
 
   return (
-    <main className={styles.main}>
-      <section className={styles.hero}>
-        <Image
-          src="/images/SCAS.png"
-          alt="Logo"
-          width={150}
-          height={150}
-          className={styles.logo}
-        />
-        <h1 className={styles.title}>SCAS</h1>
-        <p className={styles.description}>JŪSŲ SPORTO CENTRAS NR. 1</p>
+    <main className="bg-light py-5">
+      <section className="container text-center mb-5">
+        <div className="d-flex justify-content-center align-items-center mb-4">
+          <Image
+            src="/images/SCAS.png"
+            alt="SCAS Logo"
+            width={150}
+            height={150}
+            className="shadow-lg"
+          />
+        </div>
+        <p className="text-muted fs-4">JŪSŲ SPORTO CENTRAS NR. 1</p>
       </section>
 
-      <section className={styles.venues}>
-        <h2 className={styles.sectionTitle}>Laisvos salės</h2>
-        <div className={styles.grid}>
-          {loading ? (
-            <p>Kraunama...</p>
-          ) : venues.length > 0 ? (
-            venues.map((venue) => (
-              <div key={venue._id} className={styles.card}>
-                <h3>{venue.name}</h3>
-                <p>Vieta: {venue.location}</p>
-                <p>Talpa: {venue.capacity}</p>
-                <button onClick={() => handleReserve(venue._id)}>
-                  Rezervuoti
-                </button>
+      <section className="container">
+        <h2 className="text-success text-center mb-4">Laisvos salės</h2>
+        {loading ? (
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : venues.length > 0 ? (
+          <div className="row">
+            {venues.map((venue) => (
+              <div key={venue._id} className="col-md-6 col-lg-4 mb-4">
+                <div className="card h-100 shadow-lg border-0 rounded-3">
+                  {/* <img
+                   // src="/images/venue-placeholder.jpg"
+                    className="card-img-top rounded-3"
+                    alt={venue.name}
+                  /> */}
+                  <div className="card-body d-flex flex-column justify-content-between">
+                    <h4 className="card-title"><strong>{venue.name}</strong></h4>
+                    <p className="card-description"> <strong>Aprašymas: </strong>{venue.description}</p>
+                    <p className="card-text">
+                      <strong>Vieta:</strong> {venue.location}
+                    </p>
+                    <p className="card-text">
+                      <strong>Talpa:</strong> {venue.capacity}
+                    </p>
+                    <div className="mt-3 text-center">
+                      <button
+                        className="btn btn-success w-100 py-2 rounded-pill shadow-sm"
+                        onClick={() => handleReserve(venue._id)}
+                      >
+                        Rezervuoti
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            ))
-          ) : (
-            <p>Nėra laisvų salių.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center">Nėra laisvų salių.</p>
+        )}
       </section>
     </main>
   );

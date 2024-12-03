@@ -1,78 +1,96 @@
-"use client";
+'use client';
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "@@/actions/register";
 
-
 export default function Register() {
   const [error, setError] = useState<string>();
   const router = useRouter();
   const ref = useRef<HTMLFormElement>(null);
+
   const handleSubmit = async (formData: FormData) => {
+    console.log(formData.get("phone"));
     const r = await register({
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-        name: formData.get("name") as string    
-      });
-      ref.current?.reset();
-      if(r?.error){
-        setError(r.error);
-        return;
-      } else {
-        return router.push("/login");
-      }
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      name: formData.get("name") as string,
+      phone: formData.get("phone") as string,
+    });
+    ref.current?.reset();
+    if (r?.error) {
+      setError(r.error);
+      return;
+    } else {
+      return router.push("/login");
+    }
   };
 
-  return(
-    <section className="w-full h-screen flex items-center justify-center">
-          <form ref = {ref}
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(ref.current!);
-              handleSubmit(formData);
-            }}
-            className="p-6 w-full max-w-[400px] flex flex-col justify-between items-center gap-2 
-            border border-solid border-black bg-white rounded">
-            {error && <div className="">{error}</div>}
-            <h1 className="mb-5 w-full text-2xl font-bold">Register</h1>
-    
-            <label className="w-full text-sm">Full Name</label>
+  return (
+    <div className="d-flex align-items-center justify-content-center vh-100">
+      <div className="card shadow p-4" style={{ maxWidth: "400px", width: "100%" }}>
+        <h1 className="text-center mb-4">Registracija</h1>
+        {error && <div className="alert alert-danger text-center">{error}</div>}
+        <form
+          ref={ref}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(ref.current!);
+            handleSubmit(formData);
+          }}
+        >
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">Vardas Pavardė</label>
             <input
               type="text"
-              placeholder="Full Name"
-              className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded text-[13px]"
+              id="name"
               name="name"
+              className="form-control"
+              placeholder="Vardas Pavardė"
+              required
             />
-    
-            <label className="w-full text-sm">Email</label>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">El.pašto adresas</label>
             <input
               type="email"
-              placeholder="Email"
-              className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded"
+              id="email"
               name="email"
+              className="form-control"
+              placeholder="El.pašto adresas"
+              required
             />
-    
-            <label className="w-full text-sm">Password</label>
-            <div className="flex w-full">
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded"
-                name="password"
-              />
-            </div>
-    
-            <button className="w-full border border-solid border-black py-1.5 mt-2.5 rounded
-            transition duration-150 ease hover:bg-black">
-              Sign up
-            </button>
-    
-            
-            <Link href="/login" className="text-sm text-[#888] transition duration-150 ease hover:text-black">
-              Already have an account?
-              </Link>
-          </form>
-    </section>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="phone" className="form-label">Telefono numeris</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              className="form-control"
+              placeholder="Telefono numeris"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">Slaptažodis</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="form-control"
+              placeholder="Slaptažodis"
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">Registruotis</button>
+        </form>
+        <div className="text-center mt-3">
+          <Link href="/login" className="text-decoration-none">
+            Jau turi paskyrą? Spausk čia, kad prisijungti!
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

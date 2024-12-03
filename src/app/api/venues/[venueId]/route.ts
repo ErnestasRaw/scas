@@ -13,9 +13,9 @@ export async function GET(req: Request, { params }: { params: { venueId: string 
     const venue = await VenueDocument.findById(venueId);
     
     if (!venue) {
-      console.log(`Venue su ID ${venueId} nera`);
+      console.log(`Sale su ID ${venueId} nera`);
       return NextResponse.json(
-        { message: "Venue nera" },
+        { message: "Sales nera" },
         { status: 404 }
       );
     }
@@ -23,10 +23,10 @@ export async function GET(req: Request, { params }: { params: { venueId: string 
 
     return NextResponse.json(venue, { status: 200 });
   } catch (error) {
-    console.error("Error fetching venue:", error);
+    console.error("Klaida randant sale:", error);
 
     return NextResponse.json(
-      { message: "Error fetching venue data" },
+      { message: "Klaida gaunant sales duomenis" },
       { status: 500 }
     );
   }

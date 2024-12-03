@@ -2,7 +2,8 @@ import mongoose, { Schema, model } from "mongoose";
 
 export interface VenueDocument {
   _id: string; 
-  name: string; 
+  name: string;
+  location: string;
   description?: string; 
   capacity: number; 
   createdAt: Date;
@@ -12,6 +13,10 @@ export interface VenueDocument {
 }
 const VenueSchema = new Schema<VenueDocument>(
   {
+    location: {
+      type: String,
+      required: [true, "Vieta yra privaloma"],
+    },
     name: {
       type: String,
       required: [true, "Pavadinimas yra privalomas"],
@@ -42,7 +47,7 @@ const VenueSchema = new Schema<VenueDocument>(
   },
   {
     timestamps: true, 
-  }
+  },
 );
 
 const Venue = mongoose.models?.Venue || model<VenueDocument>("Venue", VenueSchema);
