@@ -7,7 +7,6 @@ export async function GET(req: Request, { params }: { params: { venueId: string 
 
 
   try {
-    await connectDB();
 
 
     const venue = await VenueDocument.findById(venueId);
@@ -31,3 +30,4 @@ export async function GET(req: Request, { params }: { params: { venueId: string 
     );
   }
 }
+

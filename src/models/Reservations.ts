@@ -1,8 +1,9 @@
+import { timeStamp } from "console";
 import mongoose, { Schema, model } from "mongoose";
 
 
 export interface ReservationDocument {
-  reservationId: string;
+  _id: string;
   userId: mongoose.Types.ObjectId; 
   venueId: mongoose.Types.ObjectId; 
   reservationDate: Date;
@@ -14,12 +15,6 @@ export interface ReservationDocument {
 
 const ReservationSchema = new Schema<ReservationDocument>(
   {
-    reservationId: {
-      type: String,
-      required: true,
-      unique: true,
-      default: () => `res_${Math.random().toString(36).substr(2, 9)}`, 
-    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -41,7 +36,7 @@ const ReservationSchema = new Schema<ReservationDocument>(
     },
     guests: {
       type: Number,
-      required: true,
+      required: false,
       min: 1, 
     },
   },

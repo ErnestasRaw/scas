@@ -4,50 +4,115 @@ import { useParams } from "next/navigation";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import type { Venue } from "@/models/Venues";
+import { useSession } from "next-auth/react";
 
 const VenuePage = () => {
   const { venueId } = useParams();
+  const { data: session, status } = useSession();
   const [venue, setVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const timeSlots = Array.from({ length: 16 }, (_, i) => `${(9 + i).toString().padStart(2, '0')}:00`);
+  const [filteredTimeSlots, setFilteredTimeSlots] = useState<string[]>([]);
+  const timeSlots = Array.from({ length: 15 }, (_, i) => `${(9 + i).toString().padStart(2, '0')}:00`);
 
   useEffect(() => {
-    async function fetchVenue() {
+    const fetchVenue = async () => {
       try {
         const response = await fetch(`/api/venues/${venueId}`);
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || "Error");
+          throw new Error(errorData.message || "Klaida užklausoj");
         }
-
         const data: Venue = await response.json();
         setVenue(data);
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Error");
+        setError(error instanceof Error ? error.message : "Klaida");
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     if (venueId) {
       fetchVenue();
     }
   }, [venueId]);
 
-  const handleReserve = () => {
+  const fetchReservationTimes = async (selectedDate: Date) => {
+    if (!selectedDate) return;
+
+    try {
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const url = `/api/reservations/${venueId}?date=${formattedDate}`;
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepavyko gauti užsakymų");
+      }
+
+      const data = await res.json();
+
+      if (!Array.isArray(data.reservedTimes)) {
+        throw new Error("Užsakymų duomenys formatas neteisingas");
+      }
+
+      filterReservedTimes(data.reservedTimes);
+    } catch (error) {
+      console.error("Klaida gaunant užsakymus:", error);
+    }
+  };
+
+  const filterReservedTimes = (reservedTimes: string[]) => {
+    const availableTimeSlots = timeSlots.filter((time) => !reservedTimes.includes(time));
+
+    setFilteredTimeSlots(availableTimeSlots);
+  };
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    fetchReservationTimes(date);
+  };
+
+  const handleReserve = async () => {
     if (!selectedDate || !selectedTime) {
-      alert("Pasirinkite datą prieš rezervuodami");
       return;
     }
 
-    alert(`Salė rezervuota laikui: ${selectedDate.toDateString()},  ${selectedTime}`);
+    try {
+      const url = `/api/reservations`;
+      const body = JSON.stringify({
+        venueId,
+        date: selectedDate.toISOString().split("T")[0],
+        time: selectedTime,
+        userId: session?.user?._id,
+        status: "pending",
+      });
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+
+      if (!res.ok) {
+        throw new Error("Nepavyko išsaugoti užsakymo");
+      }
+    } catch (error) {
+      console.error("Klaida kuriant užsakymą:", error);
+    }
   };
 
   if (loading) {
-    return <div className="text-center my-5"><p>Kraunama...</p></div>;
+    return <div className="text-center my-5"><p>Įkeliama...</p></div>;
   }
 
   if (error) {
@@ -55,7 +120,7 @@ const VenuePage = () => {
   }
 
   if (!venue) {
-    return <div className="text-center my-5"><p>Salė neegzsituoja.</p></div>;
+    return <div className="text-center my-5"><p>Vieta neegzistuoja.</p></div>;
   }
 
   return (
@@ -67,7 +132,7 @@ const VenuePage = () => {
               <h1 className="card-title text-primary">{venue.name}</h1>
               <p className="card-text mt-3">{venue.description}</p>
               <p className="card-text">
-                <strong>Užimtumo dydis:</strong> {venue.capacity}
+                <strong>Talpa:</strong> {venue.capacity}
               </p>
               {venue.contactPhone && (
                 <p className="card-text">
@@ -81,24 +146,22 @@ const VenuePage = () => {
         <div className="col-md-6">
           <div className="card shadow-lg h-100">
             <div className="card-body">
-              <h5 className="card-title text-center">Pasirink rezervacijos dieną</h5>
+              <h5 className="card-title text-center">Pasirinkite rezervacijos datą</h5>
               <div className="d-flex justify-content-center my-3">
                 <Calendar
-                  onChange={(value) => setSelectedDate(value as Date)}
+                  onChange={handleDateChange}
                   value={selectedDate}
-                  minDate={new Date()}
+                  minDate={new Date()} 
                 />
               </div>
               {selectedDate && (
                 <>
-                  <h5 className="card-title text-center mt-4">Pasirink laiką</h5>
+                  <h5 className="card-title text-center mt-4">Pasirinkite laiką</h5>
                   <div className="d-flex flex-wrap justify-content-center my-3">
-                    {timeSlots.map((time) => (
+                    {filteredTimeSlots.map((time) => (
                       <button
                         key={time}
-                        className={`btn btn-outline-primary m-1 ${
-                          selectedTime === time ? "active" : ""
-                        }`}
+                        className={`btn btn-outline-primary m-1 ${selectedTime === time ? "active" : ""}`}
                         onClick={() => setSelectedTime(time)}
                       >
                         {time}

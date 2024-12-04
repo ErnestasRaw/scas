@@ -11,6 +11,7 @@ export default function VenueManagement() {
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  
 
   useEffect(() => {
     async function fetchVenues() {

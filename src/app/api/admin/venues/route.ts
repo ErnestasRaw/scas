@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Venue from '@/models/Venues';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const venues = await Venue.find();
     return NextResponse.json(venues, { status: 200 });

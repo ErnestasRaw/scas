@@ -80,9 +80,6 @@ export default function Header() {
   return (
     <header className="bg-dark text-white py-3">
       <div className="container-fluid d-flex align-items-center justify-content-between">
-        <button className="btn btn-outline-light d-md-none">
-          <FiAlignJustify />
-        </button>
             {showAdminDashboard()}
         <div className="d-flex justify-content-center w-100">
           {showNavBar()}

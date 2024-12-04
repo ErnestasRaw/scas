@@ -17,8 +17,8 @@ export const authOptions: NextAuthOptions  = {
           await connectDB();
           const user = await User.findOne({
             email: credentials?.email,
-          }).select("+password +role"); 
-
+          }).select("+password +role +_id");
+          
           if (!user) throw new Error("Wrong Email");
 
           const passwordMatch = await bcrypt.compare(
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions  = {
 
           if (!passwordMatch) throw new Error("Wrong Password");
 
-          return { ...user.toObject(), role: user.role };
+          return { ...user.toObject(), role: user.role, _id: user._id.toString() };
         },
       }),
     ],
@@ -37,16 +37,19 @@ export const authOptions: NextAuthOptions  = {
     },
     callbacks: {
       async jwt({ token, user }) {
-        if (user && 'role' in user) {
-          token.role = user.role; 
+        if (user) {
+          token.role = user.role;
+          token._id = user._id; 
         }
         return token;
       },
       async session({ session, token }) {
         if (token) {
-          if (session.user) {
-            session.user.role = token.role;
-          }
+          session.user = {
+            ...session.user, 
+            role: token.role,
+            _id: token._id, 
+          };
         }
         return session;
       },

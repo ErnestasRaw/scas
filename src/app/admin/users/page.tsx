@@ -51,10 +51,15 @@ export default function UserManagement() {
 
   const toggleOrderHistory = (userId: string) => {
     setExpandedOrdersId(expandedOrdersId === userId ? null : userId);
-    if (expandedUserId === userId) {
-      setExpandedUserId(null);
-    }
+    retrieveUserReservations(userId);
+    
   };
+
+
+  // PABAIGTI
+  const retrieveUserReservations = async (userId: string) => {
+  }
+
 
   const resetPassword = (userId: string) => {
     alert(`Slaptažodis vartotojui ${userId} buvo atstatytas`);
@@ -162,25 +167,24 @@ export default function UserManagement() {
                   </tr>
                 )}
 
-                {/* {expandedOrdersId === user._id && (
-                PABAIGTI DARYTI NES XUINE CE
-                  // <tr>
-                  //   <td colSpan={7}>
-                  //     <div className="order-history">
-                  //       <h5>Užsakymų Istorija</h5>
-                  //       {user.orderHistory && user.orderHistory.length > 0 ? (
-                  //         <ul>
-                  //           {user.orderHistory.map((orderId, index) => (
-                  //             <li key={index}>Užsakymas ID: {orderId}</li>
-                  //           ))}
-                  //         </ul>
-                  //       ) : (
-                  //         <p>Vartotojas neturi užsakymų.</p>
-                  //       )}
-                  //     </div>
-                  //   </td>
-                  // </tr>
-                )} */}
+                {expandedOrdersId === user._id && (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="order-history">
+                        <h5>Užsakymų Istorija</h5>
+                        {user.orderHistory && user.orderHistory.length > 0 ? (
+                          <ul>
+                            {user.orderHistory.map((orderId, index) => (
+                              <li key={index}>Užsakymas ID: {orderId}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p>Vartotojas neturi užsakymų.</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </React.Fragment>
             ))}
           </tbody>
@@ -221,7 +225,7 @@ export default function UserManagement() {
                       className="form-control"
                       id="name"
                       value={selectedUser.phone}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
+                      onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })}
                       required
                     />
                   </div>
