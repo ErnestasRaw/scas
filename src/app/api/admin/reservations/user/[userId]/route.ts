@@ -1,4 +1,3 @@
-// API Endpoint: /api/admin/reservations/user/[userId]
 import { NextRequest } from 'next/server';
 import Reservations from '@/models/Reservations';
 import { Types } from 'mongoose';

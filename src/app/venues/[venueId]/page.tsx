@@ -5,6 +5,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import type { Venue } from "@/models/Venues";
 import { useSession } from "next-auth/react";
+import { toast } from "react-hot-toast";
+import "animate.css/animate.min.css";
 
 const VenuePage = () => {
   const { venueId } = useParams();
@@ -86,7 +88,6 @@ const VenuePage = () => {
     }
   
     try {
-      // Create a new reservation
       const url = `/api/reservations`;
       const body = JSON.stringify({
         venueId,
@@ -109,42 +110,39 @@ const VenuePage = () => {
       }
   
       fetchReservationTimes(selectedDate);
-  
+      toast.success('Rezervacija atlikta');
       setSelectedTime(null);
   
     } catch (error) {
       console.error("Klaida kuriant užsakymą:", error);
+      toast.error("Klaida kuriant užsakymą");
     }
   };
-  
 
   if (loading) {
-    return <div className="text-center my-5"><p>Įkeliama...</p></div>;
+    return <div className="text-center my-5 animate__animated animate__fadeIn"><p>Įkeliama...</p></div>;
   }
 
   if (error) {
-    return <div className="text-center my-5"><p className="text-danger">Klaida: {error}</p></div>;
+    return <div className="text-center my-5 animate__animated animate__shakeX"><p className="text-danger">Klaida: {error}</p></div>;
   }
 
   if (!venue) {
-    return <div className="text-center my-5"><p>Vieta neegzistuoja.</p></div>;
+    return <div className="text-center my-5 animate__animated animate__fadeOut"><p>Vieta neegzistuoja.</p></div>;
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 animate__animated animate__fadeInUp">
       <div className="row">
         <div className="col-md-6 mb-4">
           <div className="card shadow-lg h-100">
             <div className="card-body">
-              <h1 className="card-title text-primary">{venue.name}</h1>
-              <p className="card-text mt-3">{venue.description}</p>
-              <p className="card-text">
-                <strong>Talpa:</strong> {venue.capacity}
-              </p>
+              <h1 className="card-title text-primary display-4 animate__animated animate__zoomIn">{venue.name}</h1>
+              <p className="card-text mt-3"><strong>Aprašymas: </strong> {venue.description}</p>
+              <p className="card-text"><strong>Vieta: </strong> {venue.location}</p>
+              <p className="card-text"><strong>Talpa: </strong> {venue.capacity}</p>
               {venue.contactPhone && (
-                <p className="card-text">
-                  <strong>Kontaktai:</strong> {venue.contactPhone}
-                </p>
+                <p className="card-text"><strong>Kontaktai:</strong> {venue.contactPhone}</p>
               )}
             </div>
           </div>
@@ -153,22 +151,23 @@ const VenuePage = () => {
         <div className="col-md-6">
           <div className="card shadow-lg h-100">
             <div className="card-body">
-              <h5 className="card-title text-center">Pasirinkite rezervacijos datą</h5>
+              <h5 className="card-title text-center animate__animated animate__fadeInUp">Pasirinkite rezervacijos datą</h5>
               <div className="d-flex justify-content-center my-3">
                 <Calendar
                   onChange={handleDateChange}
                   value={selectedDate}
                   minDate={new Date()} 
+                  className="animate__animated animate__fadeIn animate__delay-1s"
                 />
               </div>
               {selectedDate && (
                 <>
-                  <h5 className="card-title text-center mt-4">Pasirinkite laiką</h5>
+                  <h5 className="card-title text-center mt-4 animate__animated animate__fadeInUp">Pasirinkite laiką</h5>
                   <div className="d-flex flex-wrap justify-content-center my-3">
                     {filteredTimeSlots.map((time) => (
                       <button
                         key={time}
-                        className={`btn btn-outline-primary m-1 ${selectedTime === time ? "active" : ""}`}
+                        className={`btn btn-outline-primary m-1 ${selectedTime === time ? "active" : ""} animate__animated animate__fadeIn`}
                         onClick={() => setSelectedTime(time)}
                       >
                         {time}
@@ -179,7 +178,7 @@ const VenuePage = () => {
               )}
               <div className="text-center mt-4">
                 <button
-                  className="btn btn-success w-100"
+                  className="btn btn-success w-100 animate__animated animate__pulse animate__delay-2s"
                   onClick={handleReserve}
                   disabled={!selectedDate || !selectedTime}
                 >

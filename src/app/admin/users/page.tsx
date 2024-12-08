@@ -14,7 +14,7 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [reservations, setReservations] = useState<any[]>([]); // To store detailed reservation data
+  const [reservations, setReservations] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchUsers() {

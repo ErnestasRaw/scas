@@ -5,14 +5,13 @@ import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Venue } from "@/models/Venues";
-
+import "animate.css/animate.min.css";
 
 export default function HomePage() {
   const { status } = useSession();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
 
   useEffect(() => {
     async function fetchVenues() {
@@ -28,12 +27,8 @@ export default function HomePage() {
       }
     }
 
-
     fetchVenues();
   }, []);
-
-
-
 
   function handleReserve(venueId: string) {
     if (status === "authenticated") {
@@ -44,9 +39,9 @@ export default function HomePage() {
   }
 
   return (
-    <main className="bg-light py-5">
+    <main className="bg-light py-5 animate__animated animate__fadeIn">
       <section className="container text-center mb-5">
-        <div className="d-flex justify-content-center align-items-center mb-4">
+        <div className="d-flex justify-content-center align-items-center mb-4 animate__animated animate__fadeIn animate__delay-1s">
           <Image
             src="/images/SCAS.png"
             alt="SCAS Logo"
@@ -55,13 +50,13 @@ export default function HomePage() {
             className="shadow-lg"
           />
         </div>
-        <p className="text-muted fs-4">JŪSŲ SPORTO CENTRAS NR. 1</p>
+        <p className="text-muted fs-4 animate__animated animate__fadeIn animate__delay-2s">JŪSŲ SPORTO CENTRAS NR. 1</p>
       </section>
 
       <section className="container">
-        <h2 className="text-success text-center mb-4">Laisvos salės</h2>
+        <h2 className="text-success text-center mb-4 animate__animated animate__fadeInUp">Laisvos salės</h2>
         {loading ? (
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center animate__animated animate__fadeIn animate__delay-1s">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
@@ -70,12 +65,7 @@ export default function HomePage() {
           <div className="row">
             {venues.map((venue) => (
               <div key={venue._id} className="col-md-6 col-lg-4 mb-4">
-                <div className="card h-100 shadow-lg border-0 rounded-3">
-                  {/* <img
-                   // src="/images/venue-placeholder.jpg"
-                    className="card-img-top rounded-3"
-                    alt={venue.name}
-                  /> */}
+                <div className="card h-100 shadow-lg border-0 rounded-3 animate__animated animate__fadeInUp">
                   <div className="card-body d-flex flex-column justify-content-between">
                     <h4 className="card-title"><strong>{venue.name}</strong></h4>
                     <p className="card-description"> <strong>Aprašymas: </strong>{venue.description}</p>
@@ -87,7 +77,7 @@ export default function HomePage() {
                     </p>
                     <div className="mt-3 text-center">
                       <button
-                        className="btn btn-success w-100 py-2 rounded-pill shadow-sm"
+                        className="btn btn-success w-100 py-2 rounded-pill shadow-sm animate__animated animate__pulse animate__delay-2s"
                         onClick={() => handleReserve(venue._id)}
                       >
                         Rezervuoti
@@ -99,7 +89,7 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <p className="text-center">Nėra laisvų salių.</p>
+          <p className="text-center animate__animated animate__fadeOut">Nėra laisvų salių.</p>
         )}
       </section>
     </main>

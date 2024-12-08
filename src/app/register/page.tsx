@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "@@/actions/register";
+import "animate.css/animate.min.css";
 
 export default function Register() {
   const [error, setError] = useState<string>();
@@ -27,10 +28,13 @@ export default function Register() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100">
-      <div className="card shadow p-4" style={{ maxWidth: "400px", width: "100%" }}>
-        <h1 className="text-center mb-4">Registracija</h1>
-        {error && <div className="alert alert-danger text-center">{error}</div>}
+    <div className="d-flex align-items-center justify-content-center vh-100 animate__animated animate__fadeIn">
+      <div
+        className="card shadow p-4 animate__animated animate__zoomIn animate__delay-1s"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
+        <h1 className="text-center mb-4 animate__animated animate__fadeInUp">Registracija</h1>
+        {error && <div className="alert alert-danger text-center animate__animated animate__fadeInUp">{error}</div>}
         <form
           ref={ref}
           onSubmit={(e) => {
@@ -39,7 +43,7 @@ export default function Register() {
             handleSubmit(formData);
           }}
         >
-          <div className="mb-3">
+          <div className="mb-3 animate__animated animate__fadeInUp animate__delay-1s">
             <label htmlFor="name" className="form-label">Vardas Pavardė</label>
             <input
               type="text"
@@ -50,7 +54,7 @@ export default function Register() {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 animate__animated animate__fadeInUp animate__delay-1s">
             <label htmlFor="email" className="form-label">El.pašto adresas</label>
             <input
               type="email"
@@ -61,7 +65,7 @@ export default function Register() {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 animate__animated animate__fadeInUp animate__delay-1s">
             <label htmlFor="phone" className="form-label">Telefono numeris</label>
             <input
               type="text"
@@ -72,7 +76,7 @@ export default function Register() {
               required
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 animate__animated animate__fadeInUp animate__delay-1s">
             <label htmlFor="password" className="form-label">Slaptažodis</label>
             <input
               type="password"
@@ -83,9 +87,11 @@ export default function Register() {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">Registruotis</button>
+          <button type="submit" className="btn btn-primary w-100 animate__animated animate__pulse animate__delay-3s">
+            Registruotis
+          </button>
         </form>
-        <div className="text-center mt-3">
+        <div className="text-center mt-3 animate__animated animate__fadeInUp">
           <Link href="/login" className="text-decoration-none">
             Jau turi paskyrą? Spausk čia, kad prisijungti!
           </Link>
