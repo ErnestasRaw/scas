@@ -84,8 +84,9 @@ const VenuePage = () => {
     if (!selectedDate || !selectedTime) {
       return;
     }
-
+  
     try {
+      // Create a new reservation
       const url = `/api/reservations`;
       const body = JSON.stringify({
         venueId,
@@ -94,7 +95,7 @@ const VenuePage = () => {
         userId: session?.user?._id,
         status: "pending",
       });
-
+  
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -102,14 +103,20 @@ const VenuePage = () => {
         },
         body,
       });
-
+  
       if (!res.ok) {
         throw new Error("Nepavyko išsaugoti užsakymo");
       }
+  
+      fetchReservationTimes(selectedDate);
+  
+      setSelectedTime(null);
+  
     } catch (error) {
       console.error("Klaida kuriant užsakymą:", error);
     }
   };
+  
 
   if (loading) {
     return <div className="text-center my-5"><p>Įkeliama...</p></div>;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { User } from '@/models/User';
+import { toast } from "react-hot-toast";
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
@@ -13,6 +14,7 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [reservations, setReservations] = useState<any[]>([]); // To store detailed reservation data
 
   useEffect(() => {
     async function fetchUsers() {
@@ -49,16 +51,42 @@ export default function UserManagement() {
     }
   };
 
-  const toggleOrderHistory = (userId: string) => {
-    setExpandedOrdersId(expandedOrdersId === userId ? null : userId);
-    retrieveUserReservations(userId);
-    
-  };
-
-
-  // PABAIGTI
   const retrieveUserReservations = async (userId: string) => {
-  }
+    try {
+      const res = await fetch(`/api/admin/reservations/user/${userId}`);
+      if (!res.ok) throw new Error("Klaida gaunant rezervacijas");
+      const data = await res.json();
+      if (data.reservationDetails.length === 0) {
+        setReservations([]); 
+        toast.error("Vartotojas neturi užsakymų");  
+      } else {
+        setReservations(data.reservationDetails);
+      }
+      setExpandedOrdersId(userId);
+    } catch (error) {
+      console.error("Klaida gaunant rezervacijas:", error);
+      toast.error("Klaida įkeliant užsakymus");
+    }
+  };
+  
+
+  const cancelReservation = async (reservationId: string) => {
+    if (!window.confirm("Ar tikrai norite atšaukti šią rezervaciją?")) return;
+
+    try {
+        const res = await fetch(`/api/admin/reservations/${reservationId}`, {
+            method: 'DELETE',
+        });
+        if (!res.ok) throw new Error("Klaida atšaukiant rezervaciją");
+
+        toast.success("Rezervacija atšaukta");
+
+        setReservations((prev) => prev.filter((res) => res.reservationId !== reservationId));
+    } catch (error) {
+        toast.error("Klaida atšaukiant rezervaciją");
+        console.error(error);
+    }
+};
 
 
   const resetPassword = (userId: string) => {
@@ -136,7 +164,7 @@ export default function UserManagement() {
                     <button className="btn btn-info btn-sm" onClick={() => toggleUserDetails(user._id)}>
                       Peržiūrėti
                     </button>
-                    <button className="btn btn-secondary btn-sm" onClick={() => toggleOrderHistory(user._id)}>
+                    <button className="btn btn-secondary btn-sm" onClick={() => retrieveUserReservations(user._id)}>
                       Užsakymai
                     </button>
                   </td>
@@ -157,11 +185,11 @@ export default function UserManagement() {
                           Atstatyti slaptažodį
                         </button>
                         <button className="btn btn-info btn-sm me-2" onClick={() => openModal(user)}>
-                         Redaguoti duomenis
+                          Redaguoti duomenis
                         </button>
-                    <button className="btn btn-danger btn-sm" onClick={() => deleteUser(user._id)}>
-                      Pašalinti vartotoją
-                    </button>
+                        <button className="btn btn-danger btn-sm" onClick={() => deleteUser(user._id)}>
+                          Pašalinti vartotoją
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -172,14 +200,42 @@ export default function UserManagement() {
                     <td colSpan={7}>
                       <div className="order-history">
                         <h5>Užsakymų Istorija</h5>
-                        {user.orderHistory && user.orderHistory.length > 0 ? (
-                          <ul>
-                            {user.orderHistory.map((orderId, index) => (
-                              <li key={index}>Užsakymas ID: {orderId}</li>
-                            ))}
-                          </ul>
+                        {reservations.length > 0 ? (
+                          <table className="table">
+                            <thead>
+                              <tr>
+                                <th>Užsakymo ID</th>
+                                <th>Salė - Vieta</th>
+                                <th>Data</th>
+                                <th>Svečiai</th>
+                                <th>Statusas</th>
+                                <th>Veiksmai</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {reservations.map((reservation) => (
+                                <tr key={reservation.reservationId}>
+                                  <td>{reservation.reservationId}</td>
+                                  <td>{reservation.venueName} - {reservation.venueLocation}</td>
+                                  <td>{reservation.reservationDate}</td>
+                                  <td>{reservation.guests}</td>
+                                  <td>{reservation.status}</td>
+                                  <td>
+                                    {reservation.status !== 'canceled' && (
+                                      <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => cancelReservation(reservation.reservationId)}
+                                      >
+                                        Atšaukti rezervaciją
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         ) : (
-                          <p>Vartotojas neturi užsakymų.</p>
+                          <p>Vartotojas neturi užsakymų.</p> 
                         )}
                       </div>
                     </td>
@@ -190,6 +246,7 @@ export default function UserManagement() {
           </tbody>
         </table>
       </div>
+
       {isModalOpen && selectedUser && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
@@ -217,13 +274,13 @@ export default function UserManagement() {
                       onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
                       required
                     />
-                  </div>       
-                    <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Telefono numeris</label>
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="phone" className="form-label">Telefono numeris</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
+                      id="phone"
                       value={selectedUser.phone}
                       onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })}
                       required
