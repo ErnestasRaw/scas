@@ -3,7 +3,7 @@ import Reservations from '@/models/Reservations';
 import { Types } from 'mongoose';
 
 export async function GET(req: NextRequest, { params }: { params: { userId: string } }) {
-    const { userId } = params;
+    const { userId } = await params;
 
     try {
         const reservations = await Reservations.find({ userId: new Types.ObjectId(userId) })
@@ -17,6 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
         const reservationDetails = reservations.map((reservation) => ({
             reservationId: reservation._id,
             venueName: reservation.venueId.name,
+            venueType: reservation.venueId.type,
             venueLocation: reservation.venueId.location,
             reservationDate: new Date(reservation.reservationDate).toLocaleString(),
             guests: reservation.guests,

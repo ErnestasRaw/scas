@@ -1,27 +1,40 @@
 import mongoose, { Schema, model } from "mongoose";
 
+export const venueTypes = {
+  Conference: "conference",
+  Sport: "sport",
+  Event: "event",
+} as const;
+
 export interface VenueDocument {
-  _id: string; 
+  _id: string;
   name: string;
   location: string;
-  description?: string; 
-  capacity: number; 
+  description?: string;
+  capacity: number;
   createdAt: Date;
-  updatedAt: Date; 
-  contactPhone?: string; 
+  updatedAt: Date;
+  contactPhone?: string;
   status: "active" | "inactive";
+  venueType: venueTypes;
 }
+
 const VenueSchema = new Schema<VenueDocument>(
   {
     location: {
       type: String,
       required: [true, "Vieta yra privaloma"],
     },
+    venueType: {
+      type: String,
+      enum: Object.values(venueTypes),
+      default: venueTypes.Conference,
+    },
     name: {
       type: String,
       required: [true, "Pavadinimas yra privalomas"],
-      unique: true, 
-      trim: true, 
+      unique: true,
+      trim: true,
     },
     description: {
       type: String,
@@ -34,10 +47,7 @@ const VenueSchema = new Schema<VenueDocument>(
     },
     contactPhone: {
       type: String,
-      match: [
-        /^\+?\d{10,15}$/,
-        "Netinkamas formatas",
-      ],
+      match: [/^\+?\d{10,15}$/, "Netinkamas formatas"],
     },
     status: {
       type: String,
@@ -46,8 +56,8 @@ const VenueSchema = new Schema<VenueDocument>(
     },
   },
   {
-    timestamps: true, 
-  },
+    timestamps: true,
+  }
 );
 
 const Venue = mongoose.models?.Venue || model<VenueDocument>("Venue", VenueSchema);

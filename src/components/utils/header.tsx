@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { FiAlignJustify } from "react-icons/fi";
+import { FiAlignJustify, FiUser } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -13,16 +13,14 @@ export default function Header() {
   const pathname = usePathname();
 
   const showAdminDashboard = () => {
-    if(session?.user?.role === "admin")
-    {
+    if(session?.user?.role === "admin") {
       return (
-          <Link href="/admin" className="nav-link text-white px-3 py-2" aria-current={pathname === '/admin' ? 'page' : undefined}>
-            Admin
-          </Link>
+        <Link href="/admin" className="nav-link text-white px-3 py-2" aria-current={pathname === '/admin' ? 'page' : undefined}>
+          Admin
+        </Link>
       );
     }
-  }
-
+  };
 
   const showNavBar = () => {
     if (status === "authenticated") {
@@ -38,28 +36,42 @@ export default function Header() {
             Rezervacijos
           </Link>
         </nav>
-
       );
     }
   };
+
   const showSession = () => {
     if (status === "authenticated") {
+      const userProfileUrl = `/profile/${session?.user?._id}`;
       return (
         <div className="d-flex align-items-center ms-auto">
           {session && (
-            <span className="text-white">
-              Prisijungęs, kaip {session?.user?.name}
-            </span>
+            <div className="d-flex align-items-center bg-dark text-white rounded-pill px-3 py-2 gap-3 shadow">
+              <span className="text-light fw-bold">
+                Prisijungęs, kaip {session?.user?.name}
+              </span>
+              <button
+                className="btn btn-warning text-dark fw-bold d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow"
+                onClick={() => {
+                  router.push(userProfileUrl);
+                }}
+                style={{ width: "auto", height: "auto" }}
+              >
+                <FiUser size={20} />
+              </button>
+            </div>
           )}
+
           <button
-            className="btn btn-danger ms-2"
+            className="btn btn-danger ms-2 d-flex align-items-center justify-content-center"
             onClick={() => {
-              signOut({ redirect: false }).then(() => {
+              signOut({ redirect: true }).then(() => {
                 router.push("/"); 
               });
             }}
+            style={{ width: "auto", height: "auto" }}
           >
-            <IoMdLogOut className="me-2" /> Atsijungti
+            <IoMdLogOut size={20} />
           </button>
         </div>
       );
@@ -76,11 +88,10 @@ export default function Header() {
     }
   };
 
-
   return (
     <header className="bg-dark text-white py-3">
       <div className="container-fluid d-flex align-items-center justify-content-between">
-            {showAdminDashboard()}
+        {showAdminDashboard()}
         <div className="d-flex justify-content-center w-100">
           {showNavBar()}
         </div>

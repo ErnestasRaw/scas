@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import React from 'react';
-import Venue from '@/models/Venues';
+import { Venue } from '@/models/Venues';
+import  { venueTypes }  from '@/models/Venues';
 
 export default function VenueManagement() {
   const [venues, setVenues] = useState<Venue[]>([]);
@@ -11,6 +12,8 @@ export default function VenueManagement() {
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  
   
 
   useEffect(() => {
@@ -20,7 +23,7 @@ export default function VenueManagement() {
         if (!res.ok) throw new Error('Failed to fetch venues');
         const data = await res.json();
         setVenues(data);
-      } catch (err) {
+      } catch {
         setError('Klaida įkeliant vietų sąrašą');
       } finally {
         setLoading(false);
@@ -102,6 +105,7 @@ export default function VenueManagement() {
               <th>Talpa</th>
               <th>Kontaktinis telefonas</th>
               <th>Statusas</th>
+              <th>Tipas</th>
               <th>Veiksmai</th>
             </tr>
           </thead>
@@ -113,6 +117,7 @@ export default function VenueManagement() {
                 <td>{venue.capacity}</td>
                 <td>{venue.contactPhone || 'Nėra'}</td>
                 <td>{venue.status}</td>
+                <td>{venue.venueType}</td>
                 <td>
                   <button
                     className="btn btn-info btn-sm"
@@ -247,6 +252,27 @@ export default function VenueManagement() {
         <option value="inactive">Neaktyvus</option>
       </select>
     </div>
+    <div className="mb-3">
+  <label htmlFor="venueType" className="form-label">
+    Salės tipas
+  </label>
+  <select
+    className="form-select"
+    id="venueType"
+    value={selectedVenue?.venueType || venueTypes.Conference}
+    onChange={(e) =>
+      setSelectedVenue((prev) => ({
+        ...prev!,
+        venueType: e.target.value as venueTypes,
+      }))
+    }
+    required
+  >
+    <option value={venueTypes.Conference}>Konferencijų</option>
+    <option value={venueTypes.Sport}>Sporto</option>
+    <option value={venueTypes.Event}>Renginių</option>
+  </select>
+</div>
     <button type="submit" className="btn btn-primary">
       {isEditing ? 'Atnaujinti salę' : 'Pridėti salę'}
     </button>
