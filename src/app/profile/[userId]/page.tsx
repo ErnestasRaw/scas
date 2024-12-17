@@ -104,7 +104,7 @@ export default function ProfilePage() {
       toast.error('Slaptažodžiai nesutampa');
       return;
     }
-
+  
     try {
       const response = await fetch(`/api/users/${userId}/change-password`, {
         method: 'POST',
@@ -113,24 +113,31 @@ export default function ProfilePage() {
         },
         body: JSON.stringify(passwordData),
       });
-
+  
       const data = await response.json();
+  
       if (response.ok) {
         toast.success('Slaptažodis sėkmingai pakeistas');
         setPasswordData({
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
-        }); 
-        signOut({ redirect: true });
+        });
+        signOut({ redirect: true }); 
       } else {
-        toast.error(data.error || 'Nepavyko pakeisti slaptažodžio');
+        
+        if (data.error) {
+          toast.error(data.error); 
+        } else {
+          toast.error('Nepavyko pakeisti slaptažodžio');
+        }
       }
     } catch (error) {
       console.error(error);
       toast.error('Nepavyko pakeisti slaptažodžio');
     }
   };
+  
 
   const handleMoreInfo = async (venueId: string) => {
     try {
