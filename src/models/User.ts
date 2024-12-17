@@ -30,15 +30,20 @@ const UserSchema = new Schema<UserDocument>(
     email: {
       type: String,
       unique: true,
-      required: [true, "Email is required"],
+      required: [true, "El. pašto adresas yra privalomas"],
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Email is invalid",
+        "El. pašto adresas turi būti tinkamo formato",
       ],
     },
     phone: {
       type: String,
-      required: [true, "Phone is required"],
+      required: [true, "Telefono numeris yra privalomas"],
+      match: [
+        /^\+?[1-9]\d{1,14}$/,
+        "Telefono numeris turi būti tinkamo formato, pvz. +37061396772",
+      ],
+      maxlength: [13, "Telefono numeris turi būti ne ilgesnis nei 15 simbolių"],
     },
     role: {
       type: String,
@@ -47,17 +52,22 @@ const UserSchema = new Schema<UserDocument>(
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Slaptažodis yra privalomas"],
+      minlength: [8, "Slaptažodis turi būti bent 8 simbolių ilgio"],
+      match: [
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+        "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną mažąją raidę, didžiąją raidę, skaičių ir specialų simbolį [@$!%*?&]",
+      ],
     },
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "Vardas yra privalomas"],
+      maxlength: [100, "Vardas negali būti ilgesnis nei 100 simbolių"],
     },
   },
   {
     timestamps: true,
-  },
-  
+  }
 );
 
 const User = mongoose.models?.User || model<UserDocument>("User", UserSchema);

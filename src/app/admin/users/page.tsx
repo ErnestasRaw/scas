@@ -297,6 +297,7 @@ export default function UserManagement() {
                       <option value="user">Vartotojas</option>
                       <option value="admin">Administratorius</option>
                       <option value="employee">Darbuotojas</option>
+                      <option value="federation">Federacija</option>
                     </select>
                   </div>
 

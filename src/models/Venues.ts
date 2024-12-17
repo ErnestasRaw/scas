@@ -35,6 +35,8 @@ const VenueSchema = new Schema<VenueDocument>(
       required: [true, "Pavadinimas yra privalomas"],
       unique: true,
       trim: true,
+      maxlength: [100, "Pavadinimas negali būti ilgesnis nei 100 simbolių"],
+      minlength : [5, "Pavadinimas turi būti ilgesnis nei 5 simboliai"]
     },
     description: {
       type: String,

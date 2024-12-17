@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { FiAlignJustify, FiUser } from "react-icons/fi";
+import { FiUser } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -21,6 +21,16 @@ export default function Header() {
       );
     }
   };
+
+  const showFederationTab = () => {
+    if(session?.user?.role === "federation") {
+      return (
+        <Link href="/federation" className="nav-link text-white px-3 py-2" aria-current={pathname === '/federation' ? 'page' : undefined}>
+          Federation
+        </Link>
+      );
+    }
+  }
 
   const showNavBar = () => {
     if (status === "authenticated") {
@@ -63,10 +73,11 @@ export default function Header() {
           )}
 
           <button
+            id="logout-button" // Added id attribute here
             className="btn btn-danger ms-2 d-flex align-items-center justify-content-center"
             onClick={() => {
               signOut({ redirect: true }).then(() => {
-                router.push("/"); 
+                router.push("/login"); // Ensure the user is redirected to the login page
               });
             }}
             style={{ width: "auto", height: "auto" }}
@@ -92,6 +103,7 @@ export default function Header() {
     <header className="bg-dark text-white py-3">
       <div className="container-fluid d-flex align-items-center justify-content-between">
         {showAdminDashboard()}
+        {showFederationTab()}
         <div className="d-flex justify-content-center w-100">
           {showNavBar()}
         </div>

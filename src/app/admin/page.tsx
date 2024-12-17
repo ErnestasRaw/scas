@@ -15,7 +15,7 @@ export default function AdminDashboard() {
     }
 
     if (session?.user.role !== "admin") {
-      throw new Error("Pisk velnias, tu neturi teisiu cia buti!");
+      throw new Error("Neturi pakankamų teisių!");
       return;
     }
 

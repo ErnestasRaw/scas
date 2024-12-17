@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import User from '@/models/User';
-import bcrypt from 'bcryptjs'; 
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest, { params }: { params: { userId: string } }) {
-  const { userId } = await params;
+  const { userId } = params; 
   const { currentPassword, newPassword, confirmPassword } = await req.json(); 
 
   try {
@@ -21,14 +21,21 @@ export async function POST(req: NextRequest, { params }: { params: { userId: str
       return NextResponse.json({ error: 'Naujas slaptažodis ir patvirtinimas nesutampa' }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12); 
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
 
     user.password = hashedPassword;
+
+    await user.validate(); 
+
     await user.save();
 
     return NextResponse.json({ message: 'Slaptažodis sėkmingai pakeistas' }, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating password:', error);
+    if (error.name === 'ValidationError') {
+      const errorMessages = Object.values(error.errors).map(err => err.message);
+      return NextResponse.json({ error: errorMessages.join(', ') }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Vidinė serverio klaida' }, { status: 500 });
   }
 }
