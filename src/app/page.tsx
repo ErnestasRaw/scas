@@ -82,8 +82,7 @@ export default function HomePage() {
           />
         </div>
         <p className="text-muted fs-4 animate__animated animate__fadeIn animate__delay-2s">JŪSŲ SPORTO CENTRAS NR. 1</p>
-      </section> */}
-
+      </section>
       <section className="container mb-4">
         <h3 className="mb-3 text-success">Filtrai</h3>
         <Row className="g-3">

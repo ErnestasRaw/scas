@@ -57,12 +57,17 @@ export default function ProfilePage() {
             const response = await fetch(`/api/users/${userId}/get-reservations`);
             const data = await response.json();
             if (response.ok) {
-              setReservations(data);
+              if (Array.isArray(data.reservations)) {
+                setReservations(data.reservations);
+              } else {
+                setReservations([]); 
+                toast.error('Nerasta jokių rezervacijų');
+              }
             } else {
-              toast.error(data.error || 'Klaida užkraunant rezervacijas');
+              toast.error(data.error);
             }
           } catch (error) {
-            toast.error('Nepavyko užkrauti rezervacijų');
+            toast.error(error);
           }
         }
 
@@ -95,8 +100,37 @@ export default function ProfilePage() {
     }
   };
 
-  // pabaigti
   const handleCancelReservation = async (reservationId: string) => {
+    try {
+      const response = await fetch(`/api/admin/reservations/${reservationId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      const contentType = response.headers.get('Content-Type');
+      let data;
+  
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        data = await response.text();
+      }
+  
+      if (response.ok) {
+        const updatedReservations = reservations.map((reservation) => {
+          if (reservation._id === reservationId) {
+            return { ...reservation, status: 'Cancelled' };
+          }
+          return reservation;
+        });
+        setReservations(updatedReservations);
+        toast.success(data || 'Rezervacija atšaukta');
+      } else {
+        toast.error(data || 'Nepavyko atšaukti rezervacijos');
+      }
+    } catch (error) {
+      toast.error('Nepavyko atšaukti rezervacijos');
+    }
   };
 
   const handleChangePassword = async () => {
@@ -125,19 +159,13 @@ export default function ProfilePage() {
         });
         signOut({ redirect: true }); 
       } else {
-        
-        if (data.error) {
-          toast.error(data.error); 
-        } else {
-          toast.error('Nepavyko pakeisti slaptažodžio');
-        }
+        toast.error(data.error || 'Nepavyko pakeisti slaptažodžio');
       }
     } catch (error) {
       console.error(error);
       toast.error('Nepavyko pakeisti slaptažodžio');
     }
   };
-  
 
   const handleMoreInfo = async (venueId: string) => {
     try {
@@ -193,7 +221,7 @@ export default function ProfilePage() {
           <Card className="shadow-lg p-4 mb-4 animate__animated animate__fadeIn">
             <Card.Body>
               <Card.Title className="text-center">Mano rezervacijos</Card.Title>
-              {reservations.length === 0 ? (
+              {Array.isArray(reservations) && reservations.length === 0 ? (
                 <p>Rezervacijų nerasta</p>
               ) : (
                 <table className="table table-bordered table-striped">
@@ -254,55 +282,12 @@ export default function ProfilePage() {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowVenueModal(false)}>
-                Uždaryti
+                Užverti
               </Button>
             </Modal.Footer>
           </Modal>
 
-          <Modal show={showPasswordModal} onHide={() => setShowPasswordModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Pakeisti slaptažodį</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group className="mb-3">
-                  <Form.Label>Esamas slaptažodis</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={passwordData.currentPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Naujas slaptažodis</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Pakartoti naują slaptažodį</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                  />
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowPasswordModal(false)}>
-                Uždaryti
-              </Button>
-              <Button variant="primary" onClick={handleChangePassword}>
-                Pakeisti slaptažodį
-              </Button>
-            </Modal.Footer>
-          </Modal>
-          <Modal show={showProfileModal} onHide={() => setShowProfileModal(false)}>
+          <Modal show={showProfileModal} onHide={() => setShowProfileModal(false)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Redaguoti profilį</Modal.Title>
             </Modal.Header>
@@ -316,18 +301,8 @@ export default function ProfilePage() {
                     onChange={(e) => setUpdatedUser({ ...updatedUser, name: e.target.value })}
                   />
                 </Form.Group>
-
                 <Form.Group className="mb-3">
-                  <Form.Label>El. paštas</Form.Label>
-                  <Form.Control
-                    type="email"
-                    value={updatedUser?.email || ''}
-                    onChange={(e) => setUpdatedUser({ ...updatedUser, email: e.target.value })}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Telefono numeris</Form.Label>
+                  <Form.Label>Telefonas</Form.Label>
                   <Form.Control
                     type="text"
                     value={updatedUser?.phone || ''}
@@ -338,10 +313,52 @@ export default function ProfilePage() {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowProfileModal(false)}>
-                Uždaryti
+                Atšaukti
               </Button>
               <Button variant="primary" onClick={handleUpdateUser}>
-                Išsaugoti pakeitimus
+                Išsaugoti
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Keisti slaptažodį</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Esamas slaptažodis</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Naujas slaptažodis</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Patvirtinkite slaptažodį</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowPasswordModal(false)}>
+                Atšaukti
+              </Button>
+              <Button variant="primary" onClick={handleChangePassword}>
+                Pakeisti slaptažodį
               </Button>
             </Modal.Footer>
           </Modal>
