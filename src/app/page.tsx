@@ -71,7 +71,7 @@ export default function HomePage() {
 
   return (
     <main className="bg-light py-5 animate__animated animate__fadeIn">
-      {/* <section className="container text-center mb-5">
+      <section className="container text-center mb-5">
         <div className="d-flex justify-content-center align-items-center mb-4 animate__animated animate__fadeIn animate__delay-1s">
           <Image
             src="/images/SCAS.png"
