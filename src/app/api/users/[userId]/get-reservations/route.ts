@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { User } from '@/models/User';
 import Reservations from "@/models/Reservations"; 
 import { ObjectId } from 'mongodb';
 

@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { FiAlignJustify, FiUser } from "react-icons/fi";
+import { FiUser } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";

@@ -7,8 +7,6 @@ import { toast } from 'react-hot-toast';
 import { Button, Card, Form, Modal, Spinner } from 'react-bootstrap';
 
 export default function FederationPage() {
-  const { status } = useSession();
-  const router = useRouter();
   
   const [eventData, setEventData] = useState({
     name: '',
@@ -20,14 +18,6 @@ export default function FederationPage() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  if (status === 'authenticated' && !userHasFederationRole()) {
-    router.push('/');
-  }
-
-  function userHasFederationRole() {
-    const user = useSession().data?.user;
-    return user?.role === 'federation';
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
