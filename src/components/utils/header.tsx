@@ -22,6 +22,16 @@ export default function Header() {
     }
   };
 
+  const showFederationTab = () => {
+    if(session?.user?.role === "federation") {
+      return (
+        <Link href="/federation" className="nav-link text-white px-3 py-2" aria-current={pathname === '/federation' ? 'page' : undefined}>
+          Federation
+        </Link>
+      );
+    }
+  }
+
   const showNavBar = () => {
     if (status === "authenticated") {
       return (
@@ -92,6 +102,7 @@ export default function Header() {
     <header className="bg-dark text-white py-3">
       <div className="container-fluid d-flex align-items-center justify-content-between">
         {showAdminDashboard()}
+        {showFederationTab()}
         <div className="d-flex justify-content-center w-100">
           {showNavBar()}
         </div>
