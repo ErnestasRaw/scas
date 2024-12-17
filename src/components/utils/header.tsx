@@ -63,10 +63,11 @@ export default function Header() {
           )}
 
           <button
+            id="logout-button" // Added id attribute here
             className="btn btn-danger ms-2 d-flex align-items-center justify-content-center"
             onClick={() => {
               signOut({ redirect: true }).then(() => {
-                router.push("/"); 
+                router.push("/login"); // Ensure the user is redirected to the login page
               });
             }}
             style={{ width: "auto", height: "auto" }}

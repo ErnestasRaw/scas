@@ -29,8 +29,10 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cypress": "^13.16.1",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "webpack": "^5.97.1"
   }
 }
