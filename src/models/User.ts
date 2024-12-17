@@ -55,7 +55,7 @@ const UserSchema = new Schema<UserDocument>(
       required: [true, "Slaptažodis yra privalomas"],
       minlength: [8, "Slaptažodis turi būti bent 8 simbolių ilgio"],
       match: [
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
         "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną mažąją raidę, didžiąją raidę, skaičių ir specialų simbolį [@$!%*?&]",
       ],
     },
